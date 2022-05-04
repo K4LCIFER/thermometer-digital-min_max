@@ -1,0 +1,4 @@
+thermometer
+resources
+*.hex
+*.o
