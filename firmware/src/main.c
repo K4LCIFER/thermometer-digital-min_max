@@ -62,7 +62,6 @@ void display_temperature(uint8_t temperature[]);
 
 void main(void)
 {
-{
     init();
 
     // The startup time of the sensor appears to be around 750us, but the
@@ -223,13 +222,14 @@ ISR (TIMER1_CAPT_vect)
 {
     falling_edge_counter++;
     // float bit_length = ICR1 * TIMER_COUNT_PERIOD;
+    raw_sensor_data <<= 1;
     if (ICR1 < 45)    // Is a 0
     {
         // Do nothing. Doing nothing is the same as writing a zero.
     }
     else if (ICR1 > 45)   // Is a 1
     {
-        raw_sensor_data |= (1 << number_of_received_bits);
+        raw_sensor_data |= 1;
     }
 
     number_of_received_bits++;  // Incrememnt the received bit counter.
