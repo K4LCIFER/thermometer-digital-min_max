@@ -41,6 +41,7 @@ volatile bool transmission_complete = true;
 uint8_t parsed_temperature[4];
 
 uint8_t rising_edge_counter = 0;
+uint16_t timestamps[40];
 uint8_t falling_edge_counter = 0;
 
 struct SensorData
@@ -68,7 +69,7 @@ void main(void)
     // datasheet also says that it requires 2s between transmissions. The
     // following just prevents any data from being pulled from the sensor right
     // away after startup.
-    SS_SEGMENTS_OUTPUT_PORT = 0xFF;
+    // SS_SEGMENTS_OUTPUT_PORT = 0xFF;
     SS_DISPLAY_ENABLE_OUTPUT_PORT |= (1 << SS_DISPLAY_0_ENABLE_PIN);
     _delay_ms(2000);
     uint8_t d = sensor_rx();
@@ -85,7 +86,8 @@ void main(void)
 void init(void)
 {
     // Set all of the segment pins as outputs (they're all on port d)
-    SS_SEGMENTS_DIRECTION_PORT = 0b11111111;
+    // SS_SEGMENTS_DIRECTION_PORT = 0b11111111;
+    DDRD &= ~(1 << DDD5);    // external timer
 
     // Set pins controlling the transistor multiplexers as outputs.
     // <display-2><display-1><display-0>
@@ -109,6 +111,7 @@ void init(void)
     // Set up the timer for use with the receive function:
     // TCCR1B |= (1 << CS11);  // CLK/8 prescaler
     TCCR1B |= (1 << ICES1); // Set ICP1 to capture a falling edge.
+    TCCR1B |= (1 << ICNC1); // Enable the Input capture noise canceller.
 
 
     DDRB |= (1 << DDB7); // Test led
@@ -169,39 +172,39 @@ void parse_sensor_data(uint64_t data)
 
 void display_temperature(uint8_t* temperature)
 {
-    switch (temperature[3])
-    {
-        case 0:
-            SS_SEGMENTS_OUTPUT_PORT = SS_0;
-            break;
-        case 1:
-            SS_SEGMENTS_OUTPUT_PORT = SS_1;
-            break;
-        case 2:
-            SS_SEGMENTS_OUTPUT_PORT = SS_2;
-            break;
-        case 3:
-            SS_SEGMENTS_OUTPUT_PORT = SS_3;
-            break;
-        case 4:
-            SS_SEGMENTS_OUTPUT_PORT = SS_4;
-            break;
-        case 5:
-            SS_SEGMENTS_OUTPUT_PORT = SS_5;
-            break;
-        case 6:
-            SS_SEGMENTS_OUTPUT_PORT = SS_6;
-            break;
-        case 7:
-            SS_SEGMENTS_OUTPUT_PORT = SS_7;
-            break;
-        case 8:
-            SS_SEGMENTS_OUTPUT_PORT = SS_8;
-            break;
-        case 9:
-            SS_SEGMENTS_OUTPUT_PORT = SS_9;
-            break;
-    }
+    // switch (temperature[3])
+    // {
+        // case 0:
+            // SS_SEGMENTS_OUTPUT_PORT = SS_0;
+            // break;
+        // case 1:
+            // SS_SEGMENTS_OUTPUT_PORT = SS_1;
+            // break;
+        // case 2:
+            // SS_SEGMENTS_OUTPUT_PORT = SS_2;
+            // break;
+        // case 3:
+            // SS_SEGMENTS_OUTPUT_PORT = SS_3;
+            // break;
+        // case 4:
+            // SS_SEGMENTS_OUTPUT_PORT = SS_4;
+            // break;
+        // case 5:
+            // SS_SEGMENTS_OUTPUT_PORT = SS_5;
+            // break;
+        // case 6:
+            // SS_SEGMENTS_OUTPUT_PORT = SS_6;
+            // break;
+        // case 7:
+            // SS_SEGMENTS_OUTPUT_PORT = SS_7;
+            // break;
+        // case 8:
+            // SS_SEGMENTS_OUTPUT_PORT = SS_8;
+            // break;
+        // case 9:
+            // SS_SEGMENTS_OUTPUT_PORT = SS_9;
+            // break;
+    // }
 }
 
 // Interrupt Service routine for the start of a data bit
@@ -211,7 +214,8 @@ ISR (PCINT0_vect)
     // Interrupt flag is automatically cleared when the ISR is called.
     // Start the timer (starts at beginning of the bit)
     TCNT1 = 0;  // Clear the timer.
-    TCCR1B |= (1 << CS11);  // Start the timer using CLK/8
+    // TCCR1B |= (1 << CS11);  // Start the timer using CLK/8
+    TCCR1B |= ((1 << CS12) | (1 << CS11) | (1 << CS10));  // External clock
 
     TIMSK1 |= (1 << ICIE1); // Enable the timer capture interrupt.
     PCICR &= ~(1 << PCIE0); // Disable the PCINT0 interrupt.
@@ -220,14 +224,16 @@ ISR (PCINT0_vect)
 // Interrupt service routine for stopping the timer to catch the end of the bit.
 ISR (TIMER1_CAPT_vect)
 {
+    uint8_t captured_timer_value = ICR1;
     falling_edge_counter++;
     // float bit_length = ICR1 * TIMER_COUNT_PERIOD;
+    timestamps[number_of_received_bits] = captured_timer_value;
     raw_sensor_data <<= 1;
-    if (ICR1 < 45)    // Is a 0
+    if (captured_timer_value < 45)    // Is a 0
     {
         // Do nothing. Doing nothing is the same as writing a zero.
     }
-    else if (ICR1 > 45)   // Is a 1
+    else if (captured_timer_value > 45)   // Is a 1
     {
         raw_sensor_data |= 1;
     }
