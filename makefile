@@ -20,7 +20,7 @@ OBJ := $(subst .c,.o,$(SRC))
 EXE = thermometer
 
 # GCC specific flags
-CFLAGS := -I $(INC_DIR)
+CFLAGS := -I $(INC_DIR) -O1
 
 # AVR-GCC specific flags
 AVR_CFLAGS := -mmcu=$(MICROCONTROLLER)
