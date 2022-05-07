@@ -38,7 +38,7 @@ union SensorData
     };
 } sensor_data;
 
-volatile uint8_t number_of_received_bits = 0;
+volatile uint8_t number_of_captures = 0;
 
 void init(void);
 uint8_t sensor_rx(void);
@@ -64,7 +64,7 @@ void init(void)
 
 uint8_t sensor_rx(void)
 {
-    number_of_received_bits = 0;
+    number_of_captures = 0;
 
     // Pull the line low for a minimum of 1ms to initiate the transaction with
     // the sensor. Set the output register before the direction register to
@@ -86,7 +86,7 @@ uint8_t sensor_rx(void)
     TIMSK1 |= (1 << ICIE1); // Enable the capture interrupt.
 
     // Wait to acquire all the data from the sensor:
-    while (number_of_received_bits < 41);
+    while (number_of_captures < 41);
 
     // Verify the data with the checksum:
     uint8_t *raw_sensor_data_bytes = (uint8_t *)&sensor_data.raw_sensor_data;
@@ -122,12 +122,12 @@ ISR (TIMER1_CAPT_vect)
 {
     static uint16_t previous_timer_value;
     // Kickstart the bit stream with the falling edge of the start bit:
-    if (number_of_received_bits == 0)
+    if (number_of_captures == 0)
     {
         TCNT1 = 0;  // Clear the timer.
         TCCR1B |= (1 << CS11);  // Start the timer with CLK/8.
         previous_timer_value = 0;
-        number_of_received_bits++;
+        number_of_captures++;
     }
     else
     {
@@ -140,9 +140,9 @@ ISR (TIMER1_CAPT_vect)
         sensor_data.raw_sensor_data
             = (sensor_data.raw_sensor_data << 1) | (bit_period > 100);
 
-        number_of_received_bits++;
+        number_of_captures++;
         // If all the bits are received, then stop receiving.
-        if (number_of_received_bits >= 41)
+        if (number_of_captures >= 41)
         {
             // Stop the timer.
             TIMSK1 &= ~(1 << ICIE1);    // Disable the timer capture interrupt.
