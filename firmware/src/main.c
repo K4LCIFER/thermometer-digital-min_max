@@ -86,12 +86,12 @@ uint8_t sensor_rx(void)
     while (number_of_received_bits < 41);
 
     // Verify the data with the checksum:
-    uint8_t *raw_sensor_data_ptr = &sensor_data.raw_sensor_data;
-    uint8_t checksum = raw_sensor_data_ptr[0];
+    uint8_t *raw_sensor_data_bytes = &sensor_data.raw_sensor_data;
+    uint8_t checksum = raw_sensor_data_bytes[0];
     uint8_t sum = 0;
     for (uint8_t i = 1; i < 8; i++)
     {
-        sum += raw_sensor_data_ptr[i];
+        sum += raw_sensor_data_bytes[i];
     }
     if (sum != checksum)    // Bad data.
     {
