@@ -3,10 +3,19 @@
 
 /* System Defines */
 #define F_CPU 8000000UL
+
 /* AVR Includes */
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+
+/* Pogram constant defines */
+#define BIT_PERIOD_THRESHOLD 100
+
+#define HUMIDITY_DATA_BITMASK   0xFFFF000000
+#define HUMIDITY_DATA_OFFSET    24
+#define TEMPERATURE_DATA_BITMASK    0x0000FFFF00
+#define TEMPERATURE_DATA_OFFSET     8
 
 typedef struct
 {
@@ -107,9 +116,11 @@ uint8_t sensor_rx(void)
     // worry about wasting excess memory, and just use a single struct? Doing
     // that would be a simpler route.
     uint16_t humidity_data
-        = (sensor_data.raw_sensor_data & 0xFFFF000000) >> 24;
+        = (sensor_data.raw_sensor_data & HUMIDITY_DATA_BITMASK) 
+            >> HUMIDITY_DATA_OFFSET;
     uint16_t temperature_data
-        = (sensor_data.raw_sensor_data & 0x0000FFFF00) >> 8;
+        = (sensor_data.raw_sensor_data & TEMPERATURE_DATA_BITMASK) 
+            >> TEMPERATURE_DATA_OFFSET;
     sensor_data.humidity_data = humidity_data;
     sensor_data.temperature_data = temperature_data;
 
@@ -137,8 +148,8 @@ ISR (TIMER1_CAPT_vect)
         previous_timer_value = current_timer_value;
 
         // Store the received bit.
-        sensor_data.raw_sensor_data
-            = (sensor_data.raw_sensor_data << 1) | (bit_period > 100);
+        sensor_data.raw_sensor_data = (sensor_data.raw_sensor_data << 1) 
+            | (bit_period > BIT_PERIOD_THRESHOLD);
 
         number_of_captures++;
         // If all the bits are received, then stop receiving.
