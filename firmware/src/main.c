@@ -2,7 +2,6 @@
 
 
 /* System Defines */
-#define __AVR_ATmega328P__
 #define F_CPU 8000000UL
 /* AVR Includes */
 #include <avr/io.h>
@@ -11,18 +10,22 @@
 
 typedef struct
 {
-    uint8_t *input_register;
-    uint8_t *direction_register;
-    uint8_t *output_register;
+    // All three of the following have to be volatile to remove a warning. I
+    // think that it is because PINx, DDRx, and PORTx are all declared as
+    // volatile, so attaching a volatile variable to something non volatile
+    // casts it to a non volatile variable.
+    volatile uint8_t *input_register;
+    volatile uint8_t *direction_register;
+    volatile uint8_t *output_register;
     uint8_t pin_bitmask;    // Represents the pin on the port.
 } pin_t;
 
 // PB1 is the data line for the sensor.
 static const pin_t sensor_data_pin = {
+    .input_register = &PINB,
     .direction_register = &DDRB,
     .output_register = &PORTB,
-    .input_register=&PINB,
-    .pin_bitmask = 1 << 0 
+    .pin_bitmask = 1 << 0,
 };
 
 union SensorData
@@ -86,7 +89,7 @@ uint8_t sensor_rx(void)
     while (number_of_received_bits < 41);
 
     // Verify the data with the checksum:
-    uint8_t *raw_sensor_data_bytes = &sensor_data.raw_sensor_data;
+    uint8_t *raw_sensor_data_bytes = (uint8_t *)&sensor_data.raw_sensor_data;
     uint8_t checksum = raw_sensor_data_bytes[0];
     uint8_t sum = 0;
     for (uint8_t i = 1; i < 8; i++)
