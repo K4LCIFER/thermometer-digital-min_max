@@ -9,23 +9,21 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-#define SENSOR_DATA_DIRECTION_PORT DDRB
-#define SENSOR_DATA_OUTPUT_PORT PORTB
-#define SENSOR_DATA_INPUT_PORT PINB
-#define SENSOR_DATA_PIN 0
-
-//base[0] = PIN, base[1] = DDR, base[2] = PORT, pinbm = pin bitmask
 typedef struct
 {
-    uint8_t* register;
-    uint8_t bitmask;
+    uint8_t *input_register;
+    uint8_t *direction_register;
+    uint8_t *output_register;
+    uint8_t pin_bitmask;    // Represents the pin on the port.
 } pin_t;
 
-//pins
-static const pin_t sensor_pin = { &PINB, 1 << 0 }; //PB1
-
-volatile uint8_t number_of_received_bits = 0;
-volatile uint64_t raw_sensor_data = 0;
+// PB1 is the data line for the sensor.
+static const pin_t sensor_data_pin = {
+    .direction_register = &DDRB,
+    .output_register = &PORTB,
+    .input_register=&PINB,
+    .pin_bitmask = 1 << 0 
+};
 
 union SensorData
 {
@@ -34,13 +32,13 @@ union SensorData
     {
         uint16_t humidity_data;
         uint16_t temperature_data;
-        uint16_t checksum;
-    }
-};
+    };
+} sensor_data;
 
+volatile uint8_t number_of_received_bits = 0;
 
 void init(void);
-uint64_t sensor_rx(void);
+uint8_t sensor_rx(void);
 
 void main(void)
 {
@@ -58,81 +56,94 @@ void init(void)
 {
     // Set up the interrupts:
     sei();  // Enable global interrupts.
-    PCMSK0 |= (1 << PCINT0);    // Enable the interrupt for pin B1.
-
     DDRB |= (1 << DDB7); // Test led
 }
 
-// struct SensorData sensor_rx(void)
-uint64_t sensor_rx(void)
+uint8_t sensor_rx(void)
 {
-    raw_sensor_data = 0;
     number_of_received_bits = 0;
 
-    // struct SensorData received_data;
-    // Pull low 1ms minimum. This is done first so that the line isn't loaded
-    // right away.
-    SENSOR_DATA_OUTPUT_PORT &= ~(1 << SENSOR_DATA_PIN);
-    // Set the output. Pulling the line low.
-    SENSOR_DATA_DIRECTION_PORT |= (1 << SENSOR_DATA_PIN);
-    _delay_ms(1);    // Hold the line low for a minimum of 1ms.
-    SENSOR_DATA_DIRECTION_PORT &=~ (1 << SENSOR_DATA_PIN);   // Set as input.
+    // Pull the line low for a minimum of 1ms to initiate the transaction with
+    // the sensor. Set the output register before the direction register to
+    // prevent line loading?
+    *sensor_data_pin.output_register &= ~sensor_data_pin.pin_bitmask;
+    *sensor_data_pin.direction_register |= sensor_data_pin.pin_bitmask;
+    _delay_ms(1);
+    // Set as input (also passively pulls the line high through the pull-up):
+    *sensor_data_pin.direction_register &=~ sensor_data_pin.pin_bitmask;
     _delay_us(80);   // Wait 80us for the sensor to acknowledge.
-    if (SENSOR_DATA_INPUT_PORT & SENSOR_DATA_PIN)   // The sensor is not responding.
+    // If the sensor does not bring the line low (not respdonding), then cancel
+    // then transmission.
+    if (*sensor_data_pin.input_register & sensor_data_pin.pin_bitmask)
     {
-        return 0; // Exit out of the function.
+        return 1;   // Return error flag.
     }
-    _delay_us(135); // Wait 135us to go into the midle of the start data transmission bit.
-    // Clear the interrupt flags:
-    TIFR1 |= (1 << ICF1);
-    PCIFR |= (1 << PCIF0);
-    PCICR |= (1 << PCIE0);  // Enable the rising edge interrupt.
-    TIMSK1 |= (1 << ICIE1); // Enable the timer capture interrupt.
+    // Enable the timer capture interrupt to capture on a falling edge:
+    TIFR1 |= (1 << ICF1);   // Clear the interrupt flag.
+    TIMSK1 |= (1 << ICIE1); // Enable the capture interrupt.
 
-    while (number_of_received_bits < 40); // Wait here for the interrupt service routine to acquire data.
-    return raw_sensor_data;
+    // Wait to acquire all the data from the sensor:
+    while (number_of_received_bits < 41);
+
+    // Verify the data with the checksum:
+    uint8_t *raw_sensor_data_ptr = &sensor_data.raw_sensor_data;
+    uint8_t checksum = raw_sensor_data_ptr[0];
+    uint8_t sum = 0;
+    for (uint8_t i = 1; i < 8; i++)
+    {
+        sum += raw_sensor_data_ptr[i];
+    }
+    if (sum != checksum)    // Bad data.
+    {
+        return 1;   // Return error flag.
+    }
+    // Parse the received sensor data:
+    // Separate the humidity data:
+    // NOTE: The temporary variables prevent overwriting of the union's data
+    // until it is actually desired. Perhaps it would be better to just not
+    // worry about wasting excess memory, and just use a single struct? Doing
+    // that would be a simpler route.
+    uint16_t humidity_data
+        = (sensor_data.raw_sensor_data & 0xFFFF000000) >> 24;
+    uint16_t temperature_data
+        = (sensor_data.raw_sensor_data & 0x0000FFFF00) >> 8;
+    sensor_data.humidity_data = humidity_data;
+    sensor_data.temperature_data = temperature_data;
+
+    return 0;
 }
 
-// Interrupt Service routine for the start of a data bit
-ISR (PCINT0_vect)
-{
-    rising_edge_counter++;
-    // Interrupt flag is automatically cleared when the ISR is called.
-    // Start the timer (starts at beginning of the bit)
-    TCNT1 = 0;  // Clear the timer.
-    TCCR1B |= (1 << CS11);  // Start the timer using CLK/8
-
-    PCIFR |= (1 << PCIF0);
-    TIMSK1 |= (1 << ICIE1); // Enable the timer capture interrupt.
-    PCICR &= ~(1 << PCIE0); // Disable the PCINT0 interrupt.
-}
-
+// Only need to time the period since the period is just 50us + the bit length.
 // Interrupt service routine for stopping the timer to catch the end of the bit.
 ISR (TIMER1_CAPT_vect)
 {
-    uint8_t captured_timer_value = ICR1;
-    falling_edge_counter++;
-    timestamps[number_of_received_bits] = captured_timer_value;
-    raw_sensor_data <<= 1;
-    if (captured_timer_value > 45)   // Is a 1
+    static uint16_t previous_timer_value;
+    // Kickstart the bit stream with the falling edge of the start bit:
+    if (number_of_received_bits == 0)
     {
-        raw_sensor_data |= 1;
-    }
-
-    number_of_received_bits++;  // Incrememnt the received bit counter.
-
-    // Continue the capturing if 40 bits have not been acquired yet:
-    if (number_of_received_bits < 40)
-    {
-        PCIFR |= (1 << PCIF0);
-        TIMSK1 &= ~(1 << ICIE1);    // Disable the input capture interrupt.
-        PCICR |= (1 << PCIE0); // Enable the PCINT0 interrupt on pin B0
+        TCNT1 = 0;  // Clear the timer.
+        TCCR1B |= (1 << CS11);  // Start the timer with CLK/8.
+        previous_timer_value = 0;
+        number_of_received_bits++;
     }
     else
     {
-        // Disable both interrupts:
-        TIMSK1 &= ~(1 << ICIE1);
-        PCICR &= ~(1 << PCIE0);
+        uint16_t current_timer_value = ICR1;
+        uint8_t bit_period = current_timer_value - previous_timer_value;
+
+        previous_timer_value = current_timer_value;
+
+        // Store the received bit.
+        sensor_data.raw_sensor_data
+            = (sensor_data.raw_sensor_data << 1) | (bit_period > 100);
+
+        number_of_received_bits++;
+        // If all the bits are received, then stop receiving.
+        if (number_of_received_bits >= 41)
+        {
+            // Stop the timer.
+            TIMSK1 &= ~(1 << ICIE1);    // Disable the timer capture interrupt.
+        }
     }
 }
 
