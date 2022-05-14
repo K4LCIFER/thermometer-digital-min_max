@@ -31,6 +31,7 @@
 #define SS_9    _SS_A | _SS_F | _SS_B | _SS_G | _SS_C
 #define SS_DEC  _SS_DP
 #define SS_NEG  _SS_G
+#define SS_CLEAR    0
 #endif
 
 #endif
