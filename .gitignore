@@ -2,3 +2,4 @@ thermometer
 resources
 *.hex
 *.o
+*.s

@@ -20,7 +20,7 @@ OBJ := $(subst .c,.o,$(SRC))
 EXE = thermometer
 
 # GCC specific flags
-CFLAGS := -I $(INC_DIR) -O1
+CFLAGS := -I $(INC_DIR) -Ofast 
 
 # AVR-GCC specific flags
 AVR_CFLAGS := -mmcu=$(MICROCONTROLLER)
@@ -48,7 +48,7 @@ $(OBJ): $(SRC_DIR)/%.o : $(SRC_DIR)/%.c
 
 clean:
 	find . -type f -name '*.o' -delete
-	rm $(EXE) *.hex debug
+	rm $(EXE) *.hex debug *.s
 
 debug:
 	avr-gcc -g $(CFLAGS) $(AVR_CFLAGS) $(SRC) -o debug
