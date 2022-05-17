@@ -17,7 +17,7 @@ SRC := $(wildcard $(SRC_DIR)/*.c)
 OBJ := $(subst .c,.o,$(SRC))
 
 # The name of the compiled executable.
-EXE = thermometer
+EXE = thermometer.out
 
 # GCC specific flags
 CFLAGS := -I $(INC_DIR) -Ofast 
@@ -51,7 +51,7 @@ clean:
 	rm $(EXE) *.hex debug *.s
 
 debug:
-	avr-gcc -g $(CFLAGS) $(AVR_CFLAGS) $(SRC) -o debug
+	avr-gcc -g $(CFLAGS) $(AVR_CFLAGS) $(SRC) -o debug.out
 	avr-objcopy -O ihex debug debug.hex
 	sudo avrdude -c atmelice_isp -p m328p -B 1 -U flash:w:debug.hex
 	sudo avrdude -c atmelice_isp -p m328p -B 1 -U hfuse:w:$(HFUSE_DEBUG):m
