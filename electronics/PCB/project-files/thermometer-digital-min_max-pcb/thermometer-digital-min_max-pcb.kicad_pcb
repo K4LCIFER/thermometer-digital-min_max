@@ -58,7 +58,7 @@
       (usegerberextensions false)
       (usegerberattributes true)
       (usegerberadvancedattributes true)
-      (creategerberjobfile true)
+      (creategerberjobfile false)
       (svguseinch false)
       (svgprecision 6)
       (excludeedgelayer true)
@@ -134,7 +134,7 @@
     (property "Sheetname" "")
     (path "/1a358b3d-8b11-4870-960b-a79faadf9672")
     (attr through_hole)
-    (fp_text reference "R4" (at 10.16 0) (layer "F.SilkS")
+    (fp_text reference "R4" (at 3.42 0) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 65ff6411-6c84-401a-a34a-ceee3ddff8ee)
     )
@@ -182,7 +182,7 @@
     (property "Sheetname" "")
     (path "/fa19edc4-0838-40fc-99aa-55a1e619af92")
     (attr through_hole)
-    (fp_text reference "R0" (at 10.16 0) (layer "F.SilkS")
+    (fp_text reference "R0" (at 3.42 0) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp b18a6ba1-eb4b-4f83-862c-cc35b9c38766)
     )
@@ -347,7 +347,7 @@
     (property "Sheetname" "")
     (path "/22bca9e2-6278-4b5c-aeb1-c781c6414ecb")
     (attr through_hole)
-    (fp_text reference "R9" (at 7.62 -2.54) (layer "F.SilkS")
+    (fp_text reference "R9" (at 3.81 -0.25) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 51b84c29-5104-4b00-8137-121212a1506c)
     )
@@ -465,7 +465,7 @@
     (property "Sheetname" "")
     (path "/cbf73466-373c-4a9f-995b-531b0349eb65")
     (attr through_hole)
-    (fp_text reference "R1" (at 10.16 0) (layer "F.SilkS")
+    (fp_text reference "R1" (at 3.42 0) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp c9319cd8-1490-4c37-bc30-c2351d1bfbd3)
     )
@@ -612,7 +612,7 @@
     (property "Sheetname" "")
     (path "/ac96dfba-b2c0-4db5-ba79-01d7db2a6f27")
     (attr through_hole)
-    (fp_text reference "R8" (at 7.62 -2.54) (layer "F.SilkS")
+    (fp_text reference "R8" (at 3.81 -0.25) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 202ca5ea-3a7a-44d5-9229-713cd8d6f779)
     )
@@ -729,7 +729,7 @@
     (property "Sheetname" "")
     (path "/0673f146-2f5b-4b29-a898-60f1ae2f9244")
     (attr through_hole)
-    (fp_text reference "R13" (at 3.81 -2.37 90) (layer "F.SilkS")
+    (fp_text reference "R13" (at 3.81 0.05 90) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp a63fcf98-fa27-4d1a-b4b1-1b7ed1d5f4e0)
     )
@@ -777,7 +777,7 @@
     (property "Sheetname" "")
     (path "/4b0e171d-d688-4915-a728-990264bf7dd4")
     (attr through_hole)
-    (fp_text reference "R10" (at 7.62 -2.54) (layer "F.SilkS")
+    (fp_text reference "R10" (at 3.81 -0.25) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 95a89e09-309d-4eb6-910d-31c6b983eb66)
     )
@@ -850,7 +850,7 @@
     (property "Sheetname" "")
     (path "/c5fc6d34-3a9b-44ae-8524-4c3ada6b731d")
     (attr through_hole)
-    (fp_text reference "R5" (at 10.16 0) (layer "F.SilkS")
+    (fp_text reference "R5" (at 3.42 0) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 8b83f2a4-9384-4cdc-a089-8b072cf6805f)
     )
@@ -898,7 +898,7 @@
     (property "Sheetname" "")
     (path "/b2fed00a-8fd4-423e-8592-5144610a1efa")
     (attr through_hole)
-    (fp_text reference "R3" (at 10.16 0) (layer "F.SilkS")
+    (fp_text reference "R3" (at 3.42 0) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp dc2ca410-17da-4297-ad76-b8cc89eaf79e)
     )
@@ -1062,7 +1062,7 @@
     (property "Sheetname" "")
     (path "/1f23be39-237b-41ce-893f-159ffaaa69fc")
     (attr through_hole)
-    (fp_text reference "R11" (at 7.62 -2.54) (layer "F.SilkS")
+    (fp_text reference "R11" (at 3.81 -0.25) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp a5f5aa6a-f009-47de-83b6-f324e8ea2c7e)
     )
@@ -1110,7 +1110,7 @@
     (property "Sheetname" "")
     (path "/c7a852cd-02c2-4963-9280-7f484073db48")
     (attr through_hole)
-    (fp_text reference "R6" (at 10.16 0) (layer "F.SilkS")
+    (fp_text reference "R6" (at 3.42 0) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp ffd12962-3dcb-42e5-9cbd-d0f3d69715f3)
     )
@@ -1438,7 +1438,7 @@
     (property "Sheetname" "")
     (path "/d14b443d-1908-4621-af16-8ef43ffd2936")
     (attr through_hole)
-    (fp_text reference "R7" (at 10.16 0) (layer "F.SilkS")
+    (fp_text reference "R7" (at 3.42 0) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 0913d09b-b728-4397-b0b2-9d04c22708a2)
     )
@@ -1530,7 +1530,7 @@
     (property "Sheetname" "")
     (path "/812f7035-8a70-40ac-96ee-8d112024c224")
     (attr through_hole)
-    (fp_text reference "R12" (at 3.81 2.54) (layer "F.SilkS")
+    (fp_text reference "R12" (at 3.81 0.13) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 137ec2e0-d262-4cd0-a48d-3aee82cba6c2)
     )
@@ -1743,7 +1743,7 @@
     (property "Sheetname" "")
     (path "/ec0a48c1-d18c-4c8b-89f9-a492526d91c4")
     (attr through_hole)
-    (fp_text reference "R2" (at 10.16 -0.1) (layer "F.SilkS")
+    (fp_text reference "R2" (at 3.42 -0.1) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 1316049f-2800-4d0a-8477-c1269d0fd211)
     )
@@ -24315,66 +24315,16 @@
       )
     )
   )
-  (group "" (id 1edfa302-4db0-41b7-8f25-40a8b24bc531)
-    (members
-      024b9d35-df3d-4b31-8129-bbc42c73140a
-      051e2cde-25e3-43a0-b7d5-d28cf9565581
-      28b2a6f5-5533-4b4c-872e-d346c7bb4f2b
-      6ee659c3-367f-401c-8af1-ac48c3b6cb68
-      769e4387-7ae4-47aa-8821-750d8ac2566b
-      954b580f-bd37-4ea1-a8de-0418f23221d5
-      d3e8e9a4-5e45-4fd0-a95d-223770dcf6ff
-      fc41935e-4bb7-42b8-a562-2d7b46005b22
-    )
-  )
   (group "" (id 1fb4bdd3-56da-4105-b51b-95075baf3dd2)
     (members
       779ce4d9-e066-42ae-9374-6557b8d4d629
       be443ce5-af06-42d0-8685-b5ece15b9278
     )
   )
-  (group "" (id 2987e637-7d33-4134-920a-96651f86d337)
-    (members
-      4ca9010b-1673-4a27-ac83-49af0d15b3af
-      d3ffd2ce-e038-4045-9ba7-f62d284f7f2d
-    )
-  )
-  (group "" (id 29f59d03-5b4c-4173-8c9f-97c8efc1e056)
-    (members
-      1b1472a2-d733-4f28-82c0-5bd2b376edba
-      445408f8-c5ac-4c03-8a3c-b0b02414e3f9
-    )
-  )
   (group "" (id 4ee2cec2-0cf3-4fcd-a20a-0722fc3f2a76)
     (members
       78cb972d-2d9c-425c-9583-afb112350c93
       9a3740c1-15fc-4304-97a2-f8725c7720e7
-    )
-  )
-  (group "" (id 6339529a-de2c-43cb-8632-9a08511f91d7)
-    (members
-      317f30e8-bb4d-48af-86dc-3ecf0264ba51
-      b849d8e0-dccd-4a84-b348-d27742ab4116
-    )
-  )
-  (group "" (id 86d6d240-0d2b-470f-b8b9-cbfb994b0ffa)
-    (members
-      d903840e-7dde-4bdb-a6cb-64b7122abc10
-      dd171d4b-00a4-469d-9786-ac47e3b25452
-    )
-  )
-  (group "" (id 97378418-a8ae-4d46-a424-d739be5b744d)
-    (members
-      8b632281-c44d-410e-ab69-5463eaa38362
-      f79e61ae-21a2-4841-ad2a-2112f76a5d65
-    )
-  )
-  (group "" (id bc50a43c-b786-40ce-8332-e417fe592b1d)
-    (members
-      2987e637-7d33-4134-920a-96651f86d337
-      29f59d03-5b4c-4173-8c9f-97c8efc1e056
-      6339529a-de2c-43cb-8632-9a08511f91d7
-      97378418-a8ae-4d46-a424-d739be5b744d
     )
   )
 )
