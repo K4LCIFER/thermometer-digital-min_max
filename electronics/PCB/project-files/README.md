@@ -1,1 +1,1 @@
-This PCB is designed with KiCAD v6.0.7
+This PCB is designed with [KiCAD](https://www.kicad.org/) v6.0.7
