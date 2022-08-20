@@ -19,7 +19,9 @@ predictable use is the focus.
 ## Donations
 
 Monero (XMR): `8BG1wFgq4fTKhekEh58Ae1M1ShGUsp15yFXJUuCXYQiFKUmDuQ9BK8tTfUfvXV2WR1CPE5Ry6DY45DmdDQm3SiCY7Jkw5ws`
+
 ![Donate Monero](./resources/README/donations-xmr-qr.png)
 
 Bitcoin (BTC): `bc1qvx8jt2qxar7thnxczqalzeyspd0xz8xr046edu`
+
 ![Donate Bitcoin](./resources/README/donations-btc-qr.png)
