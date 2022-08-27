@@ -7,8 +7,7 @@ battery powered digital min/max thermometer.
 
 ## Scope
 
-The project is intended to be simple, reliable, and cheap by design; minimalist,
-predictable use is the focus.
+The project is intended to be simple, reliable, and cheap.
 
 ## Directory Guide
 
