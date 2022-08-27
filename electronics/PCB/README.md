@@ -14,5 +14,5 @@ This is the directory for the main PCB for the digital min/max thermometer.
 ## Images
 
 <img src="./resources/.README/pcb-layer_view.png" />
-<img src="./resources/.README/pcb-render-top.png" />
-<img src="./resources/.README/pcb-render-bottom.png" />
+<img src="./resources/.README/pcb-render-front.png" />
+<img src="./resources/.README/pcb-render-back.png" />
