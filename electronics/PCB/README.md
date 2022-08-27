@@ -11,7 +11,7 @@ This is the directory for the main PCB for the digital min/max thermometer.
 - [PCB Schematic PDFs](./schematics)
 - [Files relating to the design software](./project-files)
 
-# Images
+## Images
 
 <img src="./resources/.README/pcb-layer_view" />
 <img src="./resources/.README/pcb-render-top" />
